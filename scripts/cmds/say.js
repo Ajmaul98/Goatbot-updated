@@ -1,47 +1,47 @@
-const fs = require("fs-extra");
-const path = require("path");
-const edgeTTS = require("edge-tts");
+# cute_voice_reader.py
+import pyttsx3
+import sys
 
-module.exports = {
-  config: {
-    name: "say",
-    version: "4.0.0",
-    author: "Anime Voice",
-    countDown: 0,
-    role: 0,
-    description: "Cute anime girl voice",
-    category: "media"
-  },
+def speak_text(text):
+    # Initialize TTS engine
+    engine = pyttsx3.init()
+    
+    # Get available voices
+    voices = engine.getProperty('voices')
+    
+    # Try to select a cute/female voice
+    selected_voice = None
+    for voice in voices:
+        if "female" in voice.name.lower() or "zira" in voice.name.lower() or "samantha" in voice.name.lower():
+            selected_voice = voice.id
+            break
+    if not selected_voice:
+        selected_voice = voices[0].id  # fallback to default
+    
+    engine.setProperty('voice', selected_voice)
+    
+    # Set speech style: cute, clear
+    engine.setProperty('rate', 160)    # speed
+    engine.setProperty('volume', 1.0)  # max volume
+    
+    engine.say(text)
+    engine.runAndWait()
 
-  onStart: async function ({ api, event, args }) {
-    try {
-      const text = args.join(" ");
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python cute_voice_reader.py <filename>")
+        sys.exit(1)
 
-      if (!text) {
-        return api.sendMessage("❌ | Write something", event.threadID, event.messageID);
-      }
+    file_path = sys.argv[1]
 
-      const filePath = path.join(__dirname, "cache", `anime_${Date.now()}.mp3`);
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            text = f.read()
+        speak_text(text)
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+    except Exception as e:
+        print(f"Error: {e}")
 
-      // 💖 Cute anime style voice
-      const voice = "en-US-JennyNeural";
-
-      await edgeTTS.save({
-        text: text,
-        voice: voice,
-        file: filePath
-      });
-
-      return api.sendMessage({
-        body: "🎀 Cute Anime Voice:",
-        attachment: fs.createReadStream(filePath)
-      }, event.threadID, () => {
-        fs.unlinkSync(filePath);
-      }, event.messageID);
-
-    } catch (err) {
-      console.log(err);
-      return api.sendMessage("❌ Voice error", event.threadID, event.messageID);
-    }
-  }
-};
+if __name__ == "__main__":
+    main()
