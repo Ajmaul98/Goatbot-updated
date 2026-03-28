@@ -1,0 +1,41 @@
+const axios = require("axios");
+
+module.exports = {
+  config: {
+    name: "slap",
+    version: "1.0",
+    author: "your-name",
+    countDown: 5,
+    role: 0,
+    shortDescription: "Slap someone 😈",
+    longDescription: "Slap command with anime style image",
+    category: "fun"
+  },
+
+  onStart: async function ({ message, event, usersData }) {
+    try {
+      let targetID = event.mentions ? Object.keys(event.mentions)[0] : null;
+
+      if (!targetID) {
+        return message.reply("😒 কাকে slap দিবা? কাউকে mention করো!");
+      }
+
+      let senderName = await usersData.getName(event.senderID);
+      let targetName = await usersData.getName(targetID);
+
+      // random slap image (you can replace later if needed)
+      let imgURL = "https://i.imgur.com/8XGQZkK.jpeg"; // similar anime slap vibe
+
+      let img = (await axios.get(imgURL, { responseType: "stream" })).data;
+
+      message.reply({
+        body: `💥 ${senderName} slapped ${targetName}!`,
+        attachment: img
+      });
+
+    } catch (e) {
+      console.log(e);
+      message.reply("❌ Error occurred!");
+    }
+  }
+};
