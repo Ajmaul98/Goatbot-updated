@@ -1,9 +1,9 @@
 module.exports.config = {
     name: "autoreact",
-    version: "3.0.0",
+    version: "3.1.0",
     author: "Ajmaul",
     role: 0,
-    description: "Auto react with multi emoji effect (owner only)",
+    description: "Auto react without emoji spam (owner only)",
     category: "system",
     countDown: 0
 };
@@ -19,12 +19,14 @@ module.exports.onStart = async ({ api, event, args }) => {
         return api.sendMessage("Use: autoreact on / off", threadID);
     }
 
-    if (args[0].toLowerCase() === "on") {
+    const cmd = args[0].toLowerCase();
+
+    if (cmd === "on") {
         autoReactStatus[threadID] = true;
-        return api.sendMessage("✅ Auto React ON (owner only)", threadID);
+        return api.sendMessage("✅ Auto React ON", threadID);
     }
 
-    if (args[0].toLowerCase() === "off") {
+    if (cmd === "off") {
         autoReactStatus[threadID] = false;
         return api.sendMessage("❌ Auto React OFF", threadID);
     }
@@ -34,19 +36,21 @@ module.exports.onChat = async ({ api, event }) => {
     try {
         const threadID = event.threadID;
 
+        // feature off থাকলে কিছুই করবে না
         if (!autoReactStatus[threadID]) return;
+
+        // owner ছাড়া অন্য কারো message এ react দেবে না
         if (event.senderID !== OWNER_ID) return;
+
+        // bot নিজের message এ react না দেয়
         if (event.senderID == api.getCurrentUserID()) return;
 
         const reacts = ["🌷", "😻", "✨", "🕊️", "👍", "🐦", "🪶", "💀", "🚬", "💐"];
 
-        // random single real reaction
+        // random single reaction
         const randomReact = reacts[Math.floor(Math.random() * reacts.length)];
-        api.setMessageReaction(randomReact, event.messageID, () => {}, true);
 
-        // send all emojis as message (visual multi reaction)
-        const emojiString = reacts.join(" ");
-        api.sendMessage(emojiString, threadID);
+        api.setMessageReaction(randomReact, event.messageID, () => {}, true);
 
     } catch (e) {
         console.log("AutoReact Error:", e);
