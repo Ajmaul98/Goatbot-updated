@@ -1,12 +1,17 @@
 module.exports.config = {
     name: "autoreact",
-    version: "1.0.1",
-    author: "You",
+    version: "2.0.0",
+    author: "Ajmaul",
     role: 0,
-    description: "Auto react on/off system",
+    description: "Auto react on/off (owner only)",
     category: "system",
     countDown: 0
 };
+
+// =======================
+// YOUR FACEBOOK UID
+// =======================
+const OWNER_ID = "61588349794704";
 
 // temporary memory
 let autoReactStatus = {};
@@ -18,14 +23,14 @@ module.exports.onStart = async ({ api, event, args }) => {
         return api.sendMessage("Use: autoreact on / off", threadID);
     }
 
-    if (args[0] === "on") {
+    if (args[0].toLowerCase() === "on") {
         autoReactStatus[threadID] = true;
-        return api.sendMessage("Auto React ON", threadID);
+        return api.sendMessage("✅ Auto React ON (owner only)", threadID);
     }
 
-    if (args[0] === "off") {
+    if (args[0].toLowerCase() === "off") {
         autoReactStatus[threadID] = false;
-        return api.sendMessage("Auto React OFF", threadID);
+        return api.sendMessage("❌ Auto React OFF", threadID);
     }
 };
 
@@ -36,17 +41,20 @@ module.exports.onChat = async ({ api, event }) => {
         // check ON/OFF
         if (!autoReactStatus[threadID]) return;
 
-        // bot own message ignore
+        // only react to OWNER messages
+        if (event.senderID !== OWNER_ID) return;
+
+        // ignore bot's own messages
         if (event.senderID == api.getCurrentUserID()) return;
 
         // emoji list
-        const reacts = ["❤️", "😆", "😮", "😢", "👍", "🔥"];
+        const reacts = ["🌷", "😻", "✨", "🕊️", "👍", "🐦", "🪶", "💀", "👀", "💐"];
 
         const react = reacts[Math.floor(Math.random() * reacts.length)];
 
         api.setMessageReaction(react, event.messageID, () => {}, true);
 
     } catch (e) {
-        console.log(e);
+        console.log("AutoReact Error:", e);
     }
 };
