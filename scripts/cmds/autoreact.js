@@ -1,19 +1,15 @@
 module.exports.config = {
     name: "autoreact",
-    version: "3.0.0",
+    version: "4.0.0",
     author: "Ajmaul",
     role: 0,
-    description: "Auto react with multi emoji effect (owner only)",
+    description: "Auto react with multi emoji effect (owner only, no command react)",
     category: "system",
     countDown: 0
 };
 
-// =======================
-// YOUR FACEBOOK UID
-// =======================
 const OWNER_ID = "61588349794704";
 
-// memory for on/off per thread
 let autoReactStatus = {};
 
 module.exports.onStart = async ({ api, event, args }) => {
@@ -37,24 +33,28 @@ module.exports.onStart = async ({ api, event, args }) => {
 module.exports.onChat = async ({ api, event }) => {
     try {
         const threadID = event.threadID;
+        const message = event.body;
 
-        // system OFF হলে কিছু করবে না
+        // system OFF
         if (!autoReactStatus[threadID]) return;
 
-        // শুধু owner এর message এ কাজ করবে
+        // only owner messages
         if (event.senderID !== OWNER_ID) return;
 
-        // bot নিজের message এ react দিবে না
+        // ignore bot's own messages
         if (event.senderID == api.getCurrentUserID()) return;
+
+        // ignore commands starting with /
+        if (message && message.startsWith("/")) return;
 
         // emoji list
         const reacts = ["🌷", "😻", "✨", "🕊️", "👍", "🐦", "🪶", "💀", "🚬", "💐"];
 
-        // random single real reaction
+        // single real reaction
         const randomReact = reacts[Math.floor(Math.random() * reacts.length)];
         api.setMessageReaction(randomReact, event.messageID, () => {}, true);
 
-        // all emojis as message (fake multi reaction effect)
+        // fake multi reaction message
         const emojiString = reacts.join(" ");
         api.sendMessage(emojiString, threadID);
 
