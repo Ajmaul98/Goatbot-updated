@@ -12,7 +12,7 @@
   "antiInbox": false,
   "language": "en",
   "notesLanguage": "change to your language with ISO 639-1 code, available languages: vi (Vietnamese), en (English)",
-  "nickNameBot": "you'r bby bot🥀🎀",
+  "nickNameBot": "lemon🍋",
   "prefix": "/",
   "noPrefix": false,
   "noPrefixNotes": "When true, Bot Admins (role 2) and Developers (role 4) can run commands without the prefix",
@@ -34,8 +34,8 @@
   "whiteListMode": {
     "enable": false,
     "whiteListIds": [
-      "61588349794704",
-      "61588349794704"
+      "61573263082742",
+      ""
     ],
     "notes": "if you enable this feature, only the ids in the whiteListIds list can use the bot"
   },
