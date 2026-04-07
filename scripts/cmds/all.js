@@ -20,7 +20,7 @@ module.exports = {
 		const { participantIDs } = event;
 		const lengthAllUser = participantIDs.length;
 		const mentions = [];
-		let body = args.join(" ") || "@bathroom e na theke gc te asho ";
+		let body = args.join(" ") || "@Gu khaoya sesh hole gc te ay lawra 👺💩 ";
 		let bodyLength = body.length;
 		let i = 0;
 		for (const uid of participantIDs) {
