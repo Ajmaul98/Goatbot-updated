@@ -18,18 +18,19 @@
  */
 
 const { spawn } = require("child_process");
-const log = require("./logger/log.js");
 
 function startProject() {
 	const child = spawn("node", ["Goat.js"], {
 		cwd: __dirname,
-		stdio: "inherit",
-		shell: true
+		stdio: "inherit"
 	});
 
 	child.on("close", (code) => {
-		if (code == 2) {
-			log.info("Restarting Project...");
+		console.log("Process exited with code:", code);
+
+		// jekono error hole auto restart
+		if (code !== 0) {
+			console.log("Restarting Project...");
 			startProject();
 		}
 	});
